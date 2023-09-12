@@ -1,5 +1,5 @@
 """Static action sets for binary to discrete action space wrappers."""
-
+# A is Jump
 
 # actions for the simple run right environment
 RIGHT_ONLY = [
