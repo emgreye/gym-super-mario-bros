@@ -2,8 +2,7 @@
 # with: conda activate mario
 # then: python3 main.py
 
-# current issue: Mario will attempt to jump when in the air
-#               & jumping while in the air cancels the jump
+# current issue: Mario can't get over high pipe
 
 from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
@@ -14,9 +13,10 @@ env = JoypadSpace(env, SIMPLE_MOVEMENT)
 done = True
 env.reset()
 point = 0
+height = 0
 jump_points = []
+air_points = []
 stored_life = 3
-stored_loc = 0
 for step in range(5000):
     #action = env.action_space.sample()
     if (point in jump_points):
@@ -31,18 +31,20 @@ for step in range(5000):
         stored_life = info['life']
         if (point>50):
             for i in range(point-50, point):
-                jump_points.append(i)
-                # adds previous 20 points into the jump points array
-    if (step % 20 == 0):
-        # every 20 steps, check if mario has changed position
-        if (point > 50):
-            if (info['x_pos'] == stored_loc):
-                for i in range(point-50, point):
+                if (i not in air_points):
                     jump_points.append(i)
-                state = env.reset()
+                # adds previous 50 points into the jump points array
+    if (point > 50):
+        if (info['x_pos'] == point):
+            for i in range(point-50, point):
+                if (i not in air_points):
+                    jump_points.append(i)
+            state = env.reset()
                 # reset the environment if mario stops moving
-        stored_loc = info['x_pos']
+    if (height != info['y_pos']):
+        air_points.append(point)
     if done:
         state = env.reset()
     point = info['x_pos']
+    height = info['y_pos']
 env.close()
