@@ -2,6 +2,9 @@
 # with: conda activate mario
 # then: python3 main.py
 
+# current issue: Mario will attempt to jump when in the air
+#               & jumping while in the air cancels the jump
+
 from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, COMPLEX_MOVEMENT
@@ -26,23 +29,20 @@ for step in range(5000):
     if (stored_life > info['life']):
         # detects if mario has died
         stored_life = info['life']
-        if (point>20):
-            for i in range(point-20, point):
+        if (point>50):
+            for i in range(point-50, point):
                 jump_points.append(i)
                 # adds previous 20 points into the jump points array
-        point = 0
     if (step % 20 == 0):
         # every 20 steps, check if mario has changed position
-        if (point > 20):
+        if (point > 50):
             if (info['x_pos'] == stored_loc):
-                for i in range(point-20, point):
+                for i in range(point-50, point):
                     jump_points.append(i)
                 state = env.reset()
-                point = 0
                 # reset the environment if mario stops moving
         stored_loc = info['x_pos']
     if done:
         state = env.reset()
-        point = 0
-    point += 1
+    point = info['x_pos']
 env.close()
