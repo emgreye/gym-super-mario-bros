@@ -2,7 +2,7 @@
 # with: conda activate mario
 # then: python3 main.py
 
-# current issue: Mario can't get over high pipe
+# current issue: It thinks it died because of same position when it falls into big ditch
 
 from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
@@ -31,21 +31,24 @@ for step in range(50000):
         # detects if mario has died
         stored_life = info['life']
         if (point>50):
+            print ("died")
             for i in range(point-50, point):
                 if (i not in air_points):
                     jump_points.append(i)
                 # adds previous 50 points into the jump points array
     if (point > 50):
         if (info['x_pos'] == point and info['y_pos'] == height):
+            print ("same pos")
             for i in range(point-50, point):
                 if (i not in air_points):
                     jump_points.append(i)
             if (prev_stop == info['x_pos']):
+                print ("same stop")
                 for i in reversed(range(point-50, point)):
-                    if (i in air_points):
-                        jump_points.append(i)
-                    elif (i > point - 10):
-                        break
+                    #if (i in air_points):
+                    jump_points.append(i)
+                    #elif (i > point - 10):
+                    #    break
             state = env.reset()
             prev_stop = info['x_pos']
 
@@ -53,6 +56,11 @@ for step in range(50000):
     if (height != info['y_pos']):
         air_points.append(point)
     if done:
+        if (point>50):
+            print ("died")
+            for i in range(point-50, point):
+                if (i not in air_points):
+                    jump_points.append(i)
         state = env.reset()
     point = info['x_pos']
     height = info['y_pos']
