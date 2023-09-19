@@ -16,8 +16,9 @@ point = 0
 height = 0
 jump_points = []
 air_points = []
+prev_stop = 0
 stored_life = 3
-for step in range(5000):
+for step in range(50000):
     #action = env.action_space.sample()
     if (point in jump_points):
         action = 2
@@ -39,7 +40,15 @@ for step in range(5000):
             for i in range(point-50, point):
                 if (i not in air_points):
                     jump_points.append(i)
+            if (prev_stop == info['x_pos']):
+                for i in reversed(range(point-50, point)):
+                    if (i in air_points):
+                        jump_points.append(i)
+                    elif (i > point - 10):
+                        break
             state = env.reset()
+            prev_stop = info['x_pos']
+
                 # reset the environment if mario stops moving
     if (height != info['y_pos']):
         air_points.append(point)
