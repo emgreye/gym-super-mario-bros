@@ -35,7 +35,7 @@ for step in range(5000):
                     jump_points.append(i)
                 # adds previous 50 points into the jump points array
     if (point > 50):
-        if (info['x_pos'] == point):
+        if (info['x_pos'] == point and info['y_pos'] == height):
             for i in range(point-50, point):
                 if (i not in air_points):
                     jump_points.append(i)
