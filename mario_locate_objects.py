@@ -15,7 +15,7 @@ import string
 ################################################################################
 
 # change these values if you want more/less printing
-PRINT_GRID      = True
+PRINT_GRID      = False
 PRINT_LOCATIONS = False
 
 # If printing the grid doesn't display in an understandable way, change the
@@ -350,8 +350,17 @@ def make_action(screen, info, step, env, prev_action):
     #              action = 2 means press 'right' and 'A' buttons at the same time
 
     if step % 10 == 0:
+        for enemy in enemy_locations:
+            for mario in mario_locations:
+                enemy_location, enemy_dimensions, enemy_name = enemy
+                ex, ey = enemy_location
+                mario_location, mario_dimensions, mario_name = mario
+                mx, my = mario_location
+                if (abs(mx-ex) < 25 and abs(my-ey) < 25):
+                    action = 2
+
         # I have no strategy at the moment, so I'll choose a random action.
-        action = env.action_space.sample()
+        action = 1
         return action
     else:
         # With a random agent, I found that choosing the same random action
