@@ -56,7 +56,8 @@ image_files = {
         "koopa": ["koopaA.png", "koopaB.png"],
     },
     "block": {
-        "block": ["block1.png", "block2.png", "block3.png", "block4.png"],
+        "block": ["block1.png", "block2.png", "block3.png"],
+        "chunky": ["block4.png"],
         "question_block": ["questionA.png", "questionB.png", "questionC.png"],
         "pipe": ["pipe_upper_section.png", "pipe_lower_section.png"],
     },
@@ -350,17 +351,39 @@ def make_action(screen, info, step, env, prev_action):
     #              action = 2 means press 'right' and 'A' buttons at the same time
 
     if step % 10 == 0:
+        action = 1
+        block_below = False
+        no_hole = False
         for enemy in enemy_locations:
             for mario in mario_locations:
                 enemy_location, enemy_dimensions, enemy_name = enemy
                 ex, ey = enemy_location
                 mario_location, mario_dimensions, mario_name = mario
                 mx, my = mario_location
-                if (abs(mx-ex) < 25 and abs(my-ey) < 25):
+                if (ex-mx < 60 and ex-mx > 0 and abs(my-ey) < 60):
+                    print("enemy spotted")
                     action = 2
-
-        # I have no strategy at the moment, so I'll choose a random action.
-        action = 1
+        for block in block_locations:
+            for mario in mario_locations:
+                block_location, block_dimensions, block_name = block
+                bx, by = block_location
+                mario_location, mario_dimensions, mario_name = mario
+                mx, my = mario_location
+                if (bx-mx <= 50 and bx-mx > 0 and abs(my-by) < 90 and block_name == "pipe"):
+                    #check for pipe ahead
+                    print ("pipe ahead")
+                    action = 2
+                if ((bx-mx <= 50 and bx-mx > 30 and by-my < 16 and by-my > 0 and (block_name == "block" or block_name == "question_block") )):
+                    #check for hole ahead
+                    print("no hole")
+                    no_hole = True
+                if (bx-mx < 30 and bx-mx >11 and my-by >= 0 and my-by < 8):
+                    #check for block ahead
+                    print("block ahead")  
+                    action = 2
+        if not no_hole:
+            action = 2
+            print ("a hole")
         return action
     else:
         # With a random agent, I found that choosing the same random action
@@ -376,13 +399,23 @@ env = JoypadSpace(env, SIMPLE_MOVEMENT)
 obs = None
 done = True
 env.reset()
+height = 0
+falling = False
 for step in range(100000):
     if obs is not None:
         action = make_action(obs, info, step, env, action)
     else:
         action = 1
+    if falling:
+        action = 1
+    if (action == 2 and step%10 == 0):
+            print("jumping now")
+    falling = False
     obs, reward, terminated, truncated, info = env.step(action)
+    if (height > info['y_pos']):
+        falling = True
     done = terminated or truncated
+    height = info['y_pos']
     if done:
         env.reset()
 env.close()
