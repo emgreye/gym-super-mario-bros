@@ -416,6 +416,7 @@ for step in range(100000):
         falling = True
     done = terminated or truncated
     height = info['y_pos']
+    print (info['x_pos'])
     if done:
         env.reset()
 env.close()
