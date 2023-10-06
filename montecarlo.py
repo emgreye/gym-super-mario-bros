@@ -31,6 +31,7 @@ prev_stop = 0
 stored_life = 3
 completed = False
 while (not completed):
+    print ("restarting")
     for step in range(50000):
         if (point > 3150):
             completed == True
@@ -43,21 +44,27 @@ while (not completed):
             if (point>50):
                 print ("died")
                 done = True
-        if (point > 50):
-            if (info['x_pos'] == point and info['y_pos'] == height):
-                print ("same pos")
-                done = True
+        #if (point > 50):
+        #    if (info['x_pos'] == point and info['y_pos'] == height):
+        #        print ("same pos")
+        #        done = True
         if done:
             print ("break now!")
-            journey[step//10] += 2
+            if (journey[step//10] < 2):
+                journey[step//10] += 2
+            else:
+                print("found block")
             env.reset()
             break
         point = info['x_pos']
         height = info['y_pos']
     try:
-        death_move = jsize - journey[::-1].index(2)-1
+        death_move = jsize - min(journey[::-1].index(2), journey[::-1].index(3))-2
     except:
-        death_move = jsize - journey[::-1].index(3)-1
+        try:
+            death_move = jsize - journey[::-1].index(3)-2
+        except:
+            death_move = jsize - journey[::-1].index(2)-2
     if (journey[death_move] == 0):
         journey[death_move] = 3
     elif (journey[death_move] == 1):
