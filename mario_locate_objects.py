@@ -350,7 +350,7 @@ def make_action(screen, info, step, env, prev_action):
     #              action = 1 means press 'right' button
     #              action = 2 means press 'right' and 'A' buttons at the same time
 
-    if step % 10 == 0:
+    if step % 8 == 0:
         action = 1
         block_below = False
         no_hole = False

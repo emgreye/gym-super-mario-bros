@@ -44,10 +44,11 @@ while (not completed):
             if (point>50):
                 print ("died")
                 done = True
-        #if (point > 50):
-        #    if (info['x_pos'] == point and info['y_pos'] == height):
-        #        print ("same pos")
-        #        done = True
+        if (point > 50):
+            if (info['x_pos'] < point):
+                print ("tp'd back")
+                point = 0
+                done = True
         if done:
             print ("break now!")
             if (journey[step//10] < 2):
@@ -74,7 +75,7 @@ while (not completed):
         while (journey[i] > 1):
             i -= 1
         for j in range(i, death_move):
-            journey[j] = random.randint(0,1)
-    journey[death_move+1] = random.randint(1,2) 
+            journey[j] = random.randint(2,3)
+    journey[death_move+1] = random.randint(2,3) 
 print (journey)
 env.close()
