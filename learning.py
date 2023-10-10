@@ -37,10 +37,12 @@ air_points = []
 prev_stop = 0
 stored_life = 3
 completed = False
+count = 0
 while (not completed):
     print ("restarting")
     for step in range(50000):
-        if(step % 5000 ==0):
+        count = count+1
+        if(count % 5000 ==0):
             print("Made it")
             journeyString = ""
             for action in journey:
