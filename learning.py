@@ -27,8 +27,10 @@ height = 0
 journey = []
 if(os.path.isfile("printed_journey.txt")):
     f = open("printed_journey.txt", "r")
-    jouneyList = f.split(",")
-    for i in jouneyList:
+    journeyString = f.readlines()
+    f.close()
+    journeyList = journeyString[0].split(",")
+    for i in journeyList[0:len(journeyList)-1]:
         journey.append(int(i))
 else:
     for i in range(jsize):
