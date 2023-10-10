@@ -24,8 +24,14 @@ jsize = 1000
 point = 0
 height = 0
 journey = []
-for i in range(jsize):
-    journey.append(random.randint(0,1))
+if(os.path.isfile("printed_journey.txt")):
+    f = open("printed_journey.txt", "r")
+    jouneyList = f.split(",")
+    for i in jouneyList:
+        journey.append(int(i))
+else:
+    for i in range(jsize):
+        journey.append(random.randint(0,1))
 air_points = []
 prev_stop = 0
 stored_life = 3
@@ -33,6 +39,15 @@ completed = False
 while (not completed):
     print ("restarting")
     for step in range(50000):
+        if(step % 5000 ==0):
+            print("Made it")
+            journeyString = ""
+            for action in journey:
+                journeyString = journeyString + str(action) + ","
+            with open('printed_journey.txt', 'w') as creating_new_csv_file: 
+                pass
+            with open('printed_journey.txt', 'w') as f:
+                f.write(journeyString)
         if (point > 3150):
             completed == True
         action = (journey[step//10])%2+1
