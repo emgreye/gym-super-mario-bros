@@ -26,8 +26,8 @@ point = 0
 height = 0
 journey = []
 if(os.path.isfile("printed_journey.txt")):
-    f = open("printed_journey.txt", "r")
-    journeyString = f.readlines()
+    with open("printed_journey.txt", "r") as f:
+        journeyString = f.readlines()
     f.close()
     journeyList = journeyString[0].split(",")
     for i in journeyList[0:len(journeyList)-1]:
@@ -44,6 +44,7 @@ while (not completed):
     print ("restarting")
     for step in range(50000):
         count = count+1
+        # save the current journey to the a file every 5000 steps
         if(count % 5000 ==0):
             print("Made it")
             journeyString = ""
@@ -58,19 +59,23 @@ while (not completed):
         action = (journey[step//10])%2+1
         obs, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
+        # detects if mario has died
         if (stored_life > info['life']):
-            # detects if mario has died
             stored_life = info['life']
             if (point>50):
                 print ("died")
                 done = True
+        # detects if Mario has been sent back to the start of the level
         if (point > 50):
             if (info['x_pos'] < point):
                 print ("tp'd back")
-                point = 0
-                done = True
+                point = info['x_pos'] - 1
+                # done = True
+        # if any 'done' state has occured (such as teleporting back or losing a life)
+        # then restart the journey
         if done:
             print ("break now!")
+            # add 2 to the move that killed mario
             if (journey[step//10] < 2):
                 journey[step//10] += 2
             else:
@@ -79,6 +84,7 @@ while (not completed):
             break
         point = info['x_pos']
         height = info['y_pos']
+    # find the move that killed mario
     try:
         death_move = jsize - min(journey[::-1].index(2), journey[::-1].index(3))-2
     except:
