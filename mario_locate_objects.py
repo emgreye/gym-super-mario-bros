@@ -343,26 +343,26 @@ def make_action(screen, info, step, env, prev_action):
         print("Mario's location in world:",
               mario_world_x, mario_world_y, f"({mario_status} mario)")
 
-    # TODO: Write code for a strategy, such as a rule based agent.
 
-    # Choose an action from the list of available actions.
-    # For example, action = 0 means do nothing
-    #              action = 1 means press 'right' button
-    #              action = 2 means press 'right' and 'A' buttons at the same time
+    # above is Lauren's code
+    # below is ours
 
     if step % 5 == 0:
         action = 1
         block_below = False
         no_hole = False
-        for enemy in enemy_locations:
-            for mario in mario_locations:
+        # checks for enemies within a certain distance.
+        for mario in mario_locations:
+            for enemy in enemy_locations:
                 enemy_location, enemy_dimensions, enemy_name = enemy
                 ex, ey = enemy_location
                 mario_location, mario_dimensions, mario_name = mario
                 mx, my = mario_location
                 if (ex-mx < 60 and ex-mx > 0 and abs(my-ey) < 60):
-                    print("enemy spotted")
                     action = 2
+                    print("enemy ahead")
+                    break
+        # checks for various blocks within various distances
         for block in block_locations:
             for mario in mario_locations:
                 block_location, block_dimensions, block_name = block
@@ -375,7 +375,7 @@ def make_action(screen, info, step, env, prev_action):
                     action = 2
                 if ((bx-mx <= 50 and bx-mx > 30 and by-my < 16 and by-my > 0 and (block_name == "block" or block_name == "question_block") )):
                     #check for hole ahead
-                    print("no hole")
+                    print("no hole detected")
                     no_hole = True
                 if (bx-mx < 30 and bx-mx >11 and my-by >= 0 and my-by < 8):
                     #check for block ahead
@@ -383,7 +383,7 @@ def make_action(screen, info, step, env, prev_action):
                     action = 2
         if not no_hole:
             action = 2
-            print ("a hole")
+            print ("hole detected")
         return action
     else:
         # With a random agent, I found that choosing the same random action
@@ -406,17 +406,16 @@ for step in range(100000):
         action = make_action(obs, info, step, env, action)
     else:
         action = 1
+    # if mario is falling, don't jump because this prevents mario from jumping later on
     if falling:
         action = 1
-    if (action == 2 and step%10 == 0):
-            print("jumping now")
     falling = False
     obs, reward, terminated, truncated, info = env.step(action)
+    #if y-position, decreases set falling to true.
     if (height > info['y_pos']):
         falling = True
     done = terminated or truncated
     height = info['y_pos']
-    print (info['x_pos'])
     if done:
         env.reset()
 env.close()
