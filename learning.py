@@ -26,9 +26,11 @@ point = 0
 height = 0
 journey = []
 if(os.path.isfile("printed_journey.txt")):
-    with open("printed_journey.txt", "r") as f:
-        journeyList = f.split(",")
-    for i in journeyList:
+    f = open("printed_journey.txt", "r")
+    journeyString = f.readlines()
+    f.close()
+    journeyList = journeyString[0].split(",")
+    for i in journeyList[0:len(journeyList)-1]:
         journey.append(int(i))
 else:
     for i in range(jsize):
