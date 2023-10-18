@@ -17,7 +17,10 @@ from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, COMPLEX_MOVEMENT
 import gym
 import os
 import random
-env = gym.make("SuperMarioBros-v0", apply_api_compatibility=True, render_mode="human")
+world = "3"
+level = "1"
+name = "SuperMarioBros-"+world+"-"+level+"-v0"
+env = gym.make(name, apply_api_compatibility=True, render_mode="human")
 env = JoypadSpace(env, SIMPLE_MOVEMENT)
 done = True
 env.reset()
@@ -25,8 +28,9 @@ jsize = 1000
 point = 0
 height = 0
 journey = []
-if(os.path.isfile("printed_journey.txt")):
-    with open("printed_journey.txt", "r") as f:
+filename = world+level+'printed_journey.txt'
+if(os.path.isfile(filename)):
+    with open(filename, "r") as f:
         journeyString = f.readlines()
     f.close()
     journeyList = journeyString[0].split(",")
@@ -50,9 +54,10 @@ while (not completed):
             journeyString = ""
             for action in journey:
                 journeyString = journeyString + str(action) + ","
-            with open('printed_journey.txt', 'w') as creating_new_csv_file: 
+            filename = world+level+'printed_journey.txt'
+            with open(filename, 'w') as creating_new_csv_file: 
                 pass
-            with open('printed_journey.txt', 'w') as f:
+            with open(filename, 'w') as f:
                 f.write(journeyString)
         if (point > 3150):
             completed == True
